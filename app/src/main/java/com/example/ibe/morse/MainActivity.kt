@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -15,15 +16,14 @@ import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private fun appendTextAndScroll(text : String) {
+    private fun appendTextAndScroll(text: String) {
         if (mTextView != null) {
             mTextView.append(text + "\n")
             val layout = mTextView.getLayout()
             if (layout != null) {
-                val scrollDelta = (layout!!.getLineBottom(line: mTextView.getLineCount() - 1)
-                    - mTextView.getScrollY() - mTextView.getHeight())
+                val scrollDelta = (layout!!.getLineBottom( mTextView.getLineCount() - 1) - mTextView.getScrollY() - mTextView.getHeight())
                 if(scrollDelta > 0)
-                    mTextView.scrollBy(x:0, scrollDelta)
+                    mTextView.scrollBy(0, scrollDelta)
             }
         }
     }
@@ -38,14 +38,13 @@ class MainActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        mTextView.movmentMethod = ScrollingMovementMethod();
-
+        mTextView.movmentMethod = ScrollingMovementMethod()
         testButton.setOnClickListener { view ->
-            appendTextAndScroll(inputText.text.toString());
-            hideKeyboard();
+            appendTextAndScroll(inputText.text.toString())
+            hideKeyboard()
         }
 
-        outputText.movementMethod = ScrollingMovementMethod();
+        outputText.movementMethod = ScrollingMovementMethod()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -65,10 +64,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun Activity.hideKeyboard() {
-        hideKeyboard(if (currentFocus == null) View(context: this) else currentFocus)
+        hideKeyboard(if (currentFocus == null) View(this) else currentFocus)
     }
+
     fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, flags: 0)
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
