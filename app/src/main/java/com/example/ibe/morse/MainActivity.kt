@@ -38,13 +38,12 @@ class MainActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        mTextView.movmentMethod = ScrollingMovementMethod()
+        mTextView.movementMethod = ScrollingMovementMethod()
         testButton.setOnClickListener { view ->
             appendTextAndScroll(inputText.text.toString())
             hideKeyboard()
         }
 
-        outputText.movementMethod = ScrollingMovementMethod()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
