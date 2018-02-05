@@ -9,8 +9,9 @@ import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
-
+import org.json.JSONObject
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -28,6 +29,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    val letToCodeDict : HashMap<String, String> = HashMap<String, String>()
+    val codeToLetDict : HashMap<String, String> = HashMap<String, String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,6 +45,32 @@ class MainActivity : AppCompatActivity() {
         mTextView.movementMethod = ScrollingMovementMethod()
         testButton.setOnClickListener { view ->
             appendTextAndScroll(inputText.text.toString())
+            hideKeyboard()
+        }
+
+        val jsonObj = loadMorseJSONFile();
+        buildDictsWithJSON(jsonObj)
+
+        shwcodes.setOnClickListener{ _ ->
+            mTextView.text = ""
+            showCodes()
+            hideKeyboard()
+        }
+
+        testButton.setOnClickListener { _ ->
+            mTextView.text = ""
+            val input = inputText.text.toString()
+
+            appendTextAndScroll(input.toUpperCase())
+
+            if (input.matches("(\\.|-|\\s/\\s|\\s)+".toRegex())) {
+                val transMorse = translateMorse(input)
+                appendTextAndScroll(transMorse.toUpperCase())
+            }
+            else {
+                val transText = translateText(input)
+                appendTextAndScroll(transText)
+            }
             hideKeyboard()
         }
 
@@ -70,4 +100,76 @@ class MainActivity : AppCompatActivity() {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
+    private fun loadMorseJSONFile() : JSONObject {
+
+        val filePath = "morse.json"
+
+        val jsonStr = application.assets.open(filePath).bufferedReader().use { it.readText() }
+
+        val jsonObj = JSONObject(jsonStr.substring(jsonStr.indexOf("{"), jsonStr.lastIndexOf("}") + 1))
+
+        return jsonObj
+
+    }
+
+
+    private fun buildDictsWithJSON(jsonObj : JSONObject) {
+        for ( key in jsonObj.keys() ) {
+            val code : String = jsonObj[key] as String
+
+            letToCodeDict.put(key,code)
+            codeToLetDict.put(code,key)
+
+            Log.d("log", "$key: $code")
+
+        }
+    }
+
+    private fun showCodes() {
+        appendTextAndScroll("HERE ARE THE CODES")
+        for (key in letToCodeDict.keys.sorted()){
+            appendTextAndScroll("${key.toUpperCase()}: ${letToCodeDict[key]}")
+        }
+    }
+
+    private fun translateText(input : String) : String {
+
+        var value = ""
+
+        val lowerStr = input.toLowerCase()
+
+        for (c in lowerStr) // Loop for checking all the input
+        {
+            // if space than explode
+            if (c == ' ') value += "/ "
+            else if (letToCodeDict.containsKey(c.toString())) value += "${letToCodeDict[c.toString()]} "
+            else value += "? "
+        }
+
+        Log.d("log", "Morse: $value")
+
+        return value
+
+    }
+
+    private fun translateMorse(input: String) : String {
+        var value = ""
+
+        val lowerStr = input.split("(\\s)+".toRegex())
+
+        Log.d("log", "Split stirng: $lowerStr")
+
+        for (item in lowerStr) {
+            if (item == "/") value += " "
+            else if (codeToLetDict.containsKey(item)) value += codeToLetDict[item]
+            else value += "[NA]"
+        }
+
+        Log.d("log", "Text: $value")
+
+        return value
+    }
+
+
 }
