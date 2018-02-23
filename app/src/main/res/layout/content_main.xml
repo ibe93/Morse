@@ -16,10 +16,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="25dp"
         android:ems="10"
-        android:hint="Enter"
+        android:hint="Enter Text Here"
         android:inputType="text"
         android:singleLine="true"
-        android:text="Enter Text Here"
         app:layout_constraintBottom_toTopOf="@+id/testButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,4 +71,14 @@
         android:text="Codes"
         app:layout_constraintBottom_toTopOf="@+id/mTextView"
         app:layout_constraintEnd_toEndOf="@+id/mTextView" />
+
+    <Button
+        android:id="@+id/soundBtn"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sound"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputText" />
 </android.support.constraint.ConstraintLayout>
